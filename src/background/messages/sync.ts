@@ -1,6 +1,6 @@
-import type { PlasmoMessaging } from "@plasmohq/messaging"
+import type { PlasmoMessaging } from '@plasmohq/messaging'
 
-import handleSync from "~background"
+import handleSync from '~background'
 
 var handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   await handleSync(req.body)

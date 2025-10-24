@@ -1,15 +1,15 @@
-import browser from "webextension-polyfill"
+import browser from 'webextension-polyfill'
 
 function handleError(error: unknown): string {
   let message: string
   if (error instanceof Error) {
     message = error.message
-  } else if (error && typeof error === "object" && "message" in error) {
+  } else if (error && typeof error === 'object' && 'message' in error) {
     message = String(error.message)
-  } else if (typeof error === "string") {
+  } else if (typeof error === 'string') {
     message = error
   } else {
-    message = "Something went wrong"
+    message = 'Something went wrong'
   }
   return message
 }
@@ -19,10 +19,10 @@ export async function invokeAnkiConnect(
   params: Record<string, any> = {},
 ) {
   try {
-    let response = await fetch("http://127.0.0.1:8765", {
-      method: "POST",
+    let response = await fetch('http://127.0.0.1:8765', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         action,
@@ -49,17 +49,17 @@ export async function invokeAnkiConnect(
 }
 
 function wrapIPAWithSlashes(IPA: string) {
-  if (!IPA.startsWith("/")) {
+  if (!IPA.startsWith('/')) {
     IPA = `/${IPA}`
   }
-  if (!IPA.endsWith("/")) {
+  if (!IPA.endsWith('/')) {
     IPA = `${IPA}/`
   }
   return IPA
 }
 
 export function getBlobNameFromUrl(url: string): string {
-  let urlParts = url.split("/").filter(Boolean)
+  let urlParts = url.split('/').filter(Boolean)
   let blobName = urlParts.at(-1) as string
   return blobName
 }
@@ -68,17 +68,17 @@ export function createIPAFieldValue(pieces: { word: string; IPA: string }[]) {
   if (pieces.length > 0) {
     return pieces
       .map((p) => `<li>${p.word}: ${wrapIPAWithSlashes(p.IPA)}</li>`)
-      .join("")
+      .join('')
   } else {
-    return ""
+    return ''
   }
 }
 
 export function sendNotification(message: string) {
   browser.notifications.create({
-    type: "basic",
-    iconUrl: browser.runtime.getURL("/assets/icon.png"),
-    title: "Vocab Builder",
+    type: 'basic',
+    iconUrl: browser.runtime.getURL('/assets/icon.png'),
+    title: 'Vocab Builder',
     message,
   })
 }
