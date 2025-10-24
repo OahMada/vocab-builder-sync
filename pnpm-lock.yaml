@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@plasmohq/messaging':
+    specifier: ^0.7.2
+    version: 0.7.2(react@18.2.0)
+  p-limit:
+    specifier: ^7.2.0
+    version: 7.2.0
   plasmo:
     specifier: 0.90.5
     version: 0.90.5(@types/node@20.11.5)(react-dom@18.2.0)(react@18.2.0)
@@ -31,12 +37,18 @@ devDependencies:
   '@types/react-dom':
     specifier: 18.2.18
     version: 18.2.18
+  '@types/webextension-polyfill':
+    specifier: ^0.12.4
+    version: 0.12.4
   prettier:
     specifier: 3.2.4
     version: 3.2.4
   typescript:
     specifier: 5.3.3
     version: 5.3.3
+  webextension-polyfill:
+    specifier: ^0.12.0
+    version: 0.12.0
 
 packages:
 
@@ -2266,6 +2278,18 @@ packages:
     resolution: {integrity: sha512-P75g48dqOGneJ+n0AcqnLE/TYflcaPc3B7h6EopnCBBYUDnCNBMwYmKAkaf5pnhsEB0ybPS6TU1C2DTGfqaW7A==}
     dev: false
 
+  /@plasmohq/messaging@0.7.2(react@18.2.0):
+    resolution: {integrity: sha512-waIp827DRgy4KiF+eoWQBvlacltAGzD1LgeFdgMC0tF2eMSgSFmvIEZc/8irQUFTcG+nk/Z+ESTIS7MVX71iTQ==}
+    peerDependencies:
+      react: ^16.8.6 || ^17 || ^18 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      nanoid: 5.1.5
+      react: 18.2.0
+    dev: false
+
   /@plasmohq/parcel-bundler@0.5.6:
     resolution: {integrity: sha512-kjwj5tQUhdAK00AxXOzgqJ2jryZg4X6aleYAcjbREPzVMqKEu1NrNSNy5VGAfNRG6NCT6ZYg39ZCyuUOR2lEsQ==}
     engines: {node: '>= 16.0.0', parcel: '>= 2.7.0'}
@@ -3105,6 +3129,10 @@ packages:
   /@types/trusted-types@2.0.7:
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
     dev: false
+
+  /@types/webextension-polyfill@0.12.4:
+    resolution: {integrity: sha512-wK8YdSI0pDiaehSLDIvtvonYmLwUUivg4Z6JCJO8rkyssMAG82cFJgwPK/V7NO61mJBLg/tXeoXQL8AFzpXZmQ==}
+    dev: true
 
   /@vue/compiler-core@3.3.4:
     resolution: {integrity: sha512-cquyDNvZ6jTbf/+x+AgM2Arrp6G4Dzbb0R64jiG804HRMfRiFXWI6kqUVqZ6ZR0bQhIoQjB4+2bhNtVwndW15g==}
@@ -4749,6 +4777,12 @@ packages:
     hasBin: true
     dev: false
 
+  /nanoid@5.1.5:
+    resolution: {integrity: sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    dev: false
+
   /needle@3.3.1:
     resolution: {integrity: sha512-6k0YULvhpw+RoLNiQCRKOl09Rv1dPLr8hHnVjHqdolKwDrdNyk+Hmrthi4lIGPPz3r39dLx0hsF5s40sZ3Us4Q==}
     engines: {node: '>= 4.4.x'}
@@ -4846,6 +4880,13 @@ packages:
   /p-cancelable@4.0.1:
     resolution: {integrity: sha512-wBowNApzd45EIKdO1LaU+LrMBwAcjfPaYtVzV3lmfM3gf8Z4CHZsiIqlM8TZZ8okYvh5A1cP6gTfCRQtwUpaUg==}
     engines: {node: '>=14.16'}
+    dev: false
+
+  /p-limit@7.2.0:
+    resolution: {integrity: sha512-ATHLtwoTNDloHRFFxFJdHnG6n2WUeFjaR8XQMFdKIv0xkXjrER8/iG9iu265jOM95zXHAfv9oTkqhrfbIzosrQ==}
+    engines: {node: '>=20'}
+    dependencies:
+      yocto-queue: 1.2.1
     dev: false
 
   /package-json-from-dist@1.0.1:
@@ -5683,6 +5724,10 @@ packages:
     resolution: {integrity: sha512-DEAoo25RfSYMuTGc9vPJzZcZullwIqRDSI9LOy+fkCJPi6hykCnfKaXTuPBDuXAUcqHXyOgFtHNp/kB2FjYHbw==}
     dev: false
 
+  /webextension-polyfill@0.12.0:
+    resolution: {integrity: sha512-97TBmpoWJEE+3nFBQ4VocyCdLKfw54rFaJ6EVQYLBCXqCIpLSZkwGgASpv4oPt9gdKCJ80RJlcmNzNn008Ag6Q==}
+    dev: true
+
   /webidl-conversions@4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
     dev: false
@@ -5750,6 +5795,11 @@ packages:
     resolution: {integrity: sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw==}
     engines: {node: '>= 14.6'}
     hasBin: true
+    dev: false
+
+  /yocto-queue@1.2.1:
+    resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
+    engines: {node: '>=12.20'}
     dev: false
 
   /yoctocolors-cjs@2.1.3:

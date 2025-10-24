@@ -1,15 +1,22 @@
 {
   "name": "vocab-builder-sync",
-  "displayName": "Vocab builder sync",
-  "version": "0.0.1",
-  "description": "sync Vocab Builder data with Anki",
+  "displayName": "Vocab Builder Sync",
+  "version": "1.0.0",
+  "description": "Sync Vocab Builder data with Anki",
   "author": "Adam Hao <haozg44@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "build:firefox": "plasmo build --target=firefox-mv2",
+    "build:chrome": "plasmo build --target=chrome-mv3",
+    "build:edge": "plasmo build --target=edge-mv3",
+    "package:chrome": "plasmo package --target=chrome-mv3",
+    "package:firefox": "plasmo package --target=firefox-mv2",
+    "package:edge": "plasmo package --target=edge-mv3"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.7.2",
+    "p-limit": "^7.2.0",
     "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -20,15 +27,33 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "@types/webextension-polyfill": "^0.12.4",
     "prettier": "3.2.4",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "webextension-polyfill": "^0.12.0"
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "http://127.0.0.1/*",
+      "http://localhost/*",
+      "https://vocab-builder.app/*",
+      "https://www.vocab-builder.app/*"
     ],
     "permissions": [
-      "tabs"
+      "tabs",
+      "notifications"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "assets/*"
+        ],
+        "matches": [
+          "https://vocab-builder.app/*",
+          "https://www.vocab-builder.app/*",
+          "http://localhost/*"
+        ]
+      }
     ]
   }
 }
