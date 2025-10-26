@@ -33,12 +33,7 @@
     "webextension-polyfill": "^0.12.0"
   },
   "manifest": {
-    "host_permissions": [
-      "http://127.0.0.1/*",
-      "http://localhost/*",
-      "https://vocab-builder.app/*",
-      "https://www.vocab-builder.app/*"
-    ],
+    "host_permissions": [],
     "permissions": [
       "tabs",
       "notifications"
