@@ -35,7 +35,6 @@
   "manifest": {
     "host_permissions": [],
     "permissions": [
-      "tabs",
       "notifications"
     ],
     "web_accessible_resources": [
