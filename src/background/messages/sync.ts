@@ -196,7 +196,9 @@ async function handleSync(msg: string) {
     await invokeAnkiConnect('version');
   } catch (err) {
     console.error(err);
-    sendNotification('Anki is not running or AnkiConnect is not installed.');
+    sendNotification(
+      'Error: Anki is not running or AnkiConnect is not installed.',
+    );
     return;
   }
 
@@ -250,7 +252,7 @@ async function handleSync(msg: string) {
     }
   } catch (err) {
     console.error('Failed to setup deck:', err);
-    sendNotification('Failed to setup deck.');
+    sendNotification('Error: Failed to setup deck.');
     return;
   }
 
@@ -262,7 +264,7 @@ async function handleSync(msg: string) {
     });
   } catch (err) {
     console.error('Failed to fetch existing notes:', err);
-    sendNotification('Failed to fetch existing notes.');
+    sendNotification('Error: Failed to fetch existing notes.');
     return;
   }
 
@@ -328,7 +330,7 @@ async function handleSync(msg: string) {
     }
   } catch (err) {
     console.error('Add notes failed:', err);
-    sendNotification('Failed to add new notes. Sync was not completed.');
+    sendNotification('Error: Failed to add new notes. Sync was not completed.');
     return;
   }
 
@@ -344,7 +346,7 @@ async function handleSync(msg: string) {
   } catch (err) {
     console.error('Update notes failed:', err);
     sendNotification(
-      'Failed to update existing notes. Sync was not completed.',
+      'Error: Failed to update existing notes. Sync was not completed.',
     );
     return;
   }
@@ -357,7 +359,7 @@ async function handleSync(msg: string) {
   } catch (err) {
     console.error('Delete notes failed:', err);
     sendNotification(
-      'Failed to delete obsolete notes. Sync was not completed.',
+      'Error: Failed to delete obsolete notes. Sync was not completed.',
     );
     return;
   }
