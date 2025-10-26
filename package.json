@@ -1,7 +1,7 @@
 {
   "name": "vocab-builder-sync",
   "displayName": "Vocab Builder Sync",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Sync Vocab Builder data with Anki",
   "author": "Adam Hao <haozg44@gmail.com>",
   "scripts": {
@@ -43,11 +43,7 @@
         "resources": [
           "assets/*"
         ],
-        "matches": [
-          "https://vocab-builder.app/*",
-          "https://www.vocab-builder.app/*",
-          "http://localhost/*"
-        ]
+        "matches": []
       }
     ]
   }
