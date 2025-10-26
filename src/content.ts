@@ -1,6 +1,6 @@
-import type { PlasmoCSConfig } from 'plasmo'
+import type { PlasmoCSConfig } from 'plasmo';
 
-import { sendToBackground } from '@plasmohq/messaging'
+import { relayMessage } from '@plasmohq/messaging';
 
 export var config: PlasmoCSConfig = {
   matches: [
@@ -8,13 +8,9 @@ export var config: PlasmoCSConfig = {
     'https://www.vocab-builder.app/*',
     'http://localhost/*',
   ],
-  all_frames: false,
   run_at: 'document_end',
-}
+};
 
-window.addEventListener('message', async (event) => {
-  if (event.source !== window) return
-  if (event.data.type === 'sync') {
-    await sendToBackground({ name: 'sync', body: event.data.payload })
-  }
-})
+relayMessage({
+  name: 'sync',
+});
