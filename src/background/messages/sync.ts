@@ -47,7 +47,7 @@ interface AppData {
   audioUrl: string;
 }
 
-const deckName = `Vocab Builder`;
+let deckName = `Vocab Builder`;
 const modelName = 'Custom: Vocab Builder';
 var css = `
 @font-face {
@@ -190,7 +190,13 @@ body.nightMode .note {
 `;
 
 async function handleSync(msg: string) {
-  let appData = JSON.parse(msg) as AppData[];
+  let { data, username } = msg as unknown as {
+    data: string;
+    username: string;
+  };
+  let appData = JSON.parse(data) as AppData[];
+  deckName += ` - ${username}`;
+
   // check AnkiConnect
   try {
     await invokeAnkiConnect('version');
@@ -207,6 +213,9 @@ async function handleSync(msg: string) {
     let decks: string[] = await invokeAnkiConnect('deckNames');
     if (!decks.includes(deckName)) {
       await invokeAnkiConnect('createDeck', { deck: deckName });
+    }
+    let modals: string[] = await invokeAnkiConnect('modelNames');
+    if (!modals.includes(modelName)) {
       await invokeAnkiConnect('createModel', {
         modelName,
         inOrderFields: [
@@ -240,6 +249,7 @@ async function handleSync(msg: string) {
         ],
       });
 
+      // setup font
       let fontResponse = await fetch(
         browser.runtime.getURL('/assets/Roboto.woff2'),
       );
@@ -297,11 +307,20 @@ async function handleSync(msg: string) {
           IPA: IPAFieldValue,
           Audio: '',
         },
-        ...(audioFileName.endsWith('.mp3') && {
-          audio: [
-            { url: item.audioUrl, filename: audioFileName, fields: ['Audio'] },
-          ],
-        }),
+        ...(audioFileName.endsWith('.mp3')
+          ? {
+              audio: [
+                {
+                  url: item.audioUrl,
+                  filename: audioFileName,
+                  fields: ['Audio'],
+                },
+              ],
+            }
+          : {}),
+        options: {
+          duplicateScope: 'deck',
+        },
       };
       toAdd.push(noteParam);
     } else {

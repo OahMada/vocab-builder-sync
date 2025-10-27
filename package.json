@@ -1,7 +1,7 @@
 {
   "name": "vocab-builder-sync",
   "displayName": "Vocab Builder Sync",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Sync Vocab Builder data with Anki",
   "author": "Adam Hao <haozg44@gmail.com>",
   "scripts": {
