@@ -384,9 +384,8 @@ async function handleSync(msg: string) {
 }
 
 var handler: PlasmoMessaging.MessageHandler = async (req, res) => {
+  handleSync(req.body);
   res.send({ syncing: true });
-  await handleSync(req.body);
-  // prevent `Promised response from onMessage listener went out of scope` error in firefox
 };
 
 export default handler;
