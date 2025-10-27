@@ -47,6 +47,8 @@ interface AppData {
   audioUrl: string;
 }
 
+const modelName = 'Custom: Vocab Builder';
+const deckName = 'Vocab Builder';
 var css = `
 @font-face {
   font-family: "Roboto";
@@ -188,14 +190,7 @@ body.nightMode .note {
 `;
 
 async function handleSync(msg: string) {
-  let { data, username } = msg as unknown as {
-    data: string;
-    username: string;
-  };
-  let appData = JSON.parse(data) as AppData[];
-
-  const modelName = 'Custom: Vocab Builder';
-  let deckName = `Vocab Builder - ${username}`;
+  let appData = JSON.parse(msg) as AppData[];
 
   // check AnkiConnect
   try {
