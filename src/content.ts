@@ -28,10 +28,10 @@ export var config: PlasmoCSConfig = {
   run_at: 'document_end',
 };
 
-let syncPort = getPort('sync');
 window.addEventListener('message', (event: MessageEvent<PageMessage>) => {
   if (event.source !== window) return; // only accept messages from the same page
   if (event.data.type === 'sync') {
+    let syncPort = getPort('sync');
     syncPort.postMessage({
       body: event.data.payload,
     });
