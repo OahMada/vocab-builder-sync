@@ -10,9 +10,11 @@
     "build:firefox": "plasmo build --target=firefox-mv2",
     "build:chrome": "plasmo build --target=chrome-mv3",
     "build:edge": "plasmo build --target=edge-mv3",
+    "build:all": "npm run build:firefox &&  npm run build:chrome && npm run build:edge",
     "package:chrome": "plasmo package --target=chrome-mv3",
     "package:firefox": "plasmo package --target=firefox-mv2",
-    "package:edge": "plasmo package --target=edge-mv3"
+    "package:edge": "plasmo package --target=edge-mv3",
+    "package:all": "npm run package:firefox && npm run package:chrome && npm run package:edge"
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.7.2",
