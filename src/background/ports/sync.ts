@@ -8,7 +8,8 @@ import {
   getBlobNameFromUrl,
   invokeAnkiConnect,
   sendNotification,
-} from '../../helpers';
+} from '~helpers';
+import type { AppData } from '~types';
 
 interface UpdateFieldsParam {
   id: number;
@@ -31,20 +32,6 @@ interface AddNoteParam {
     filename: string;
     fields: string[];
   }[];
-}
-
-interface AppData {
-  id: string;
-  note: string | null;
-  sentence: string;
-  pieces: {
-    id: string;
-    word: string;
-    IPA: string;
-    index: number;
-  }[];
-  translation: string;
-  audioUrl: string;
 }
 
 const modelName = 'Custom: Vocab Builder';
@@ -189,9 +176,7 @@ body.nightMode .note {
 }
 `;
 
-async function handleSync(msg: string) {
-  let appData = JSON.parse(msg) as AppData[];
-
+async function handleSync(appData: AppData[]) {
   // check AnkiConnect
   try {
     await invokeAnkiConnect('version');
@@ -383,9 +368,9 @@ async function handleSync(msg: string) {
   );
 }
 
-var handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  handleSync(req.body);
-  res.send({ syncing: true });
+var handler: PlasmoMessaging.PortHandler = async (req, res) => {
+  let data = JSON.parse(req.body) as AppData[];
+  await handleSync(data);
 };
 
 export default handler;

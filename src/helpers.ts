@@ -65,7 +65,7 @@ export function getBlobNameFromUrl(url: string): string {
 }
 
 export function createIPAFieldValue(pieces: { word: string; IPA: string }[]) {
-  if (pieces.length > 0) {
+  if (pieces?.length > 0) {
     return pieces
       .map((p) => `<li>${p.word}: ${wrapIPAWithSlashes(p.IPA)}</li>`)
       .join('');

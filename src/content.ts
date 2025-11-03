@@ -1,12 +1,40 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { relayMessage } from '@plasmohq/messaging';
+import { getPort } from '@plasmohq/messaging/port';
+
+import type { AppData } from '~types';
+
+interface PageMessage {
+  type: 'sync';
+  payload: AppData[];
+}
+
+var targetOrigin =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : 'https://vocab-builder.app';
+
+var matches =
+  process.env.NODE_ENV === 'development'
+    ? [
+        'https://vocab-builder.app/*',
+        'https://www.vocab-builder.app/*',
+        'http://localhost:*/*',
+      ]
+    : ['https://vocab-builder.app/*', 'https://www.vocab-builder.app/*'];
 
 export var config: PlasmoCSConfig = {
-  matches: ['https://vocab-builder.app/*', 'https://www.vocab-builder.app/*'],
+  matches,
   run_at: 'document_end',
 };
 
-relayMessage({
-  name: 'sync',
+let syncPort = getPort('sync');
+window.addEventListener('message', (event: MessageEvent<PageMessage>) => {
+  if (event.source !== window) return; // only accept messages from the same page
+  if (event.data.type === 'sync') {
+    syncPort.postMessage({
+      body: event.data.payload,
+    });
+    window.postMessage({ type: 'syncing' }, targetOrigin);
+  }
 });
