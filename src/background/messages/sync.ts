@@ -196,7 +196,9 @@ body.nightMode .note {
 }
 `;
 
-async function handleSync(appData: AppData[]) {
+async function handleSync(msg: string) {
+  let appData = JSON.parse(msg) as AppData[];
+
   // check AnkiConnect
   try {
     await invokeAnkiConnect('version');
