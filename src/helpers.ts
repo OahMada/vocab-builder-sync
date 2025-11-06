@@ -82,3 +82,8 @@ export function sendNotification(message: string) {
     message,
   });
 }
+
+export function extractFilenameFromField(fieldValue: string): string | null {
+  let match = fieldValue.match(/\[sound:(.+?)\]/);
+  return match ? match[1] : null;
+}

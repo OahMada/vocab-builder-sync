@@ -2,14 +2,15 @@ import pLimit from 'p-limit';
 import browser from 'webextension-polyfill';
 
 import type { PlasmoMessaging } from '@plasmohq/messaging';
+import { Storage } from '@plasmohq/storage';
 
 import {
   createIPAFieldValue,
+  extractFilenameFromField,
   getBlobNameFromUrl,
   invokeAnkiConnect,
   sendNotification,
 } from '~helpers';
-import type { AppData } from '~types';
 
 interface UpdateFieldsParam {
   id: number;
@@ -32,6 +33,25 @@ interface AddNoteParam {
     filename: string;
     fields: string[];
   }[];
+}
+
+interface AppData {
+  id: string;
+  note: string | null;
+  sentence: string;
+  pieces: {
+    id: string;
+    word: string;
+    IPA: string;
+    index: number;
+  }[];
+  translation: string;
+  audioUrl: string;
+}
+
+interface StoreMediaInput {
+  filename: string;
+  url: string;
 }
 
 const modelName = 'Custom: Vocab Builder';
@@ -267,7 +287,11 @@ async function handleSync(appData: AppData[]) {
   // prepare add/update/delete
   let toAdd: AddNoteParam[] = [];
   let toUpdate: UpdateFieldsParam[] = [];
-  let toDelete: number[] = [];
+  let toDelete: { notes: string[]; audioFiles: string[] } = {
+    notes: [],
+    audioFiles: [],
+  };
+  let toDownload: StoreMediaInput[] = [];
 
   for (let item of appData) {
     let note = existingNotesMap.get(item.id);
@@ -285,23 +309,17 @@ async function handleSync(appData: AppData[]) {
           Note: sentenceNote,
           dbID: item.id,
           IPA: IPAFieldValue,
-          Audio: '',
+          Audio: audioFileName.endsWith('.mp3')
+            ? `[sound:${audioFileName}]`
+            : '',
         },
-        ...(audioFileName.endsWith('.mp3')
-          ? {
-              audio: [
-                {
-                  url: item.audioUrl,
-                  filename: audioFileName,
-                  fields: ['Audio'],
-                },
-              ],
-            }
-          : {}),
         options: {
           duplicateScope: 'deck',
         },
       };
+      if (audioFileName.endsWith('.mp3')) {
+        toDownload.push({ filename: audioFileName, url: item.audioUrl });
+      }
       toAdd.push(noteParam);
     } else {
       let fieldsToUpdate: Record<string, string> = {};
@@ -317,8 +335,12 @@ async function handleSync(appData: AppData[]) {
     }
   }
   for (let note of existingNotes) {
-    if (!appData.find((item) => item.id === note.fields.dbID?.value)) {
-      toDelete.push(note.noteId);
+    if (!appData.find((item) => item.id === note.fields.dbID.value)) {
+      toDelete.notes.push(note.noteId);
+      let filename = extractFilenameFromField(note.fields.Audio.value);
+      if (filename) {
+        toDelete.audioFiles.push(filename);
+      }
     }
   }
 
@@ -351,8 +373,8 @@ async function handleSync(appData: AppData[]) {
   }
 
   try {
-    for (let i = 0; i < toDelete.length; i += batchSize) {
-      let batch = toDelete.slice(i, i + batchSize);
+    for (let i = 0; i < toDelete.notes.length; i += batchSize) {
+      let batch = toDelete.notes.slice(i, i + batchSize);
       await invokeAnkiConnect('deleteNotes', { notes: batch });
     }
   } catch (err) {
@@ -363,14 +385,86 @@ async function handleSync(appData: AppData[]) {
     return;
   }
 
+  try {
+    for (let i = 0; i < toDelete.audioFiles.length; i++) {
+      let filename = toDelete.audioFiles[i];
+      await invokeAnkiConnect('deleteMediaFile', { filename });
+    }
+  } catch (error) {
+    console.error('Delete media file failed:', error);
+    sendNotification('Error: Failed to delete obsolete audio files. ');
+  }
+
   sendNotification(
-    `${toAdd.length} notes added; ${toUpdate.length} notes updated; ${toDelete.length} notes deleted.\nSync completed successfully!`,
+    `${toAdd.length} notes added; ${toUpdate.length} notes updated; ${toDelete.notes.length} notes deleted.${toAdd.length > 0 ? '\nNow start downloading audio files.' : ''}`,
   );
+
+  if (toDownload.length > 0) {
+    let storage = new Storage({ area: 'local' });
+    const batchSize = 50;
+    let chunks: StoreMediaInput[][] = [];
+    for (let i = 0; i < toDownload.length; i += batchSize) {
+      chunks.push(toDownload.slice(i, i + batchSize));
+    }
+
+    for (let i = 0; i < chunks.length; i++) {
+      let chunk = chunks[i];
+      await storage.set(`toDownload_${i}`, chunk);
+    }
+    browser.alarms.create('downloadAudioBatch', { when: Date.now() + 500 });
+  }
 }
 
-var handler: PlasmoMessaging.PortHandler = async (req, res) => {
-  let data = JSON.parse(req.body) as AppData[];
-  await handleSync(data);
+browser.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name === 'downloadAudioBatch') {
+    let all = (await browser.storage.local.get(null)) as Record<string, string>;
+    let keys = Object.keys(all)
+      .filter((k) => k.startsWith('toDownload_'))
+      .sort();
+
+    if (keys.length === 0) {
+      return;
+    }
+
+    let currentKey = keys[0];
+    let chunk = JSON.parse(all[currentKey]) as StoreMediaInput[];
+
+    try {
+      for (let input of chunk) {
+        await invokeAnkiConnect('storeMediaFile', input);
+      }
+      let storage = new Storage({ area: 'local' });
+      await storage.remove(currentKey);
+      let remaining = keys.length - 1;
+      if (remaining > 0) {
+        browser.alarms.create('downloadAudioBatch', {
+          when: Date.now() + 1000,
+        });
+      } else {
+        sendNotification('All audio files downloaded successfully!');
+      }
+    } catch (error) {
+      console.error('Error downloading audio file batch:', error);
+      browser.alarms.create('downloadAudioBatch', { when: Date.now() + 10000 });
+    }
+  }
+});
+
+// auto recover from browser restart
+browser.runtime.onStartup.addListener(async () => {
+  let all = await browser.storage.local.get(null);
+  let keys = Object.keys(all)
+    .filter((k) => k.startsWith('toDownload_'))
+    .sort();
+
+  if (keys?.length) {
+    browser.alarms.create('downloadAudioBatch', { when: Date.now() + 1000 });
+  }
+});
+
+var handler: PlasmoMessaging.MessageHandler = async (req, res) => {
+  handleSync(req.body);
+  res.send({ syncing: true });
 };
 
 export default handler;

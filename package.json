@@ -1,7 +1,7 @@
 {
   "name": "vocab-builder-sync",
   "displayName": "Vocab Builder Sync",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Sync Vocab Builder data with Anki",
   "author": "Adam Hao <haozg44@gmail.com>",
   "scripts": {
@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.7.2",
+    "@plasmohq/storage": "^1.15.0",
     "p-limit": "^7.2.0",
     "plasmo": "0.90.5",
     "react": "18.2.0",
@@ -40,7 +41,8 @@
       "https://www.vocab-builder.app/*"
     ],
     "permissions": [
-      "notifications"
+      "notifications",
+      "alarms"
     ],
     "web_accessible_resources": [
       {
@@ -49,6 +51,11 @@
         ],
         "matches": []
       }
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{7d7fd243-2a9b-4025-9276-12e6237f7221}"
+      }
+    }
   }
 }
