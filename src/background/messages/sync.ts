@@ -403,7 +403,7 @@ async function handleSync(msg: string) {
 
   if (toDownload.length > 0) {
     let storage = new Storage({ area: 'local' });
-    const batchSize = 50;
+    const batchSize = 3;
     let chunks: StoreMediaInput[][] = [];
     for (let i = 0; i < toDownload.length; i += batchSize) {
       chunks.push(toDownload.slice(i, i + batchSize));
